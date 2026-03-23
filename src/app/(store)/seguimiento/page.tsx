@@ -20,6 +20,9 @@ export default async function TrackingPage({ searchParams }: PageProps) {
         .filter(Boolean)
     : [];
 
+  const statusKey = repair?.status as keyof typeof REPAIR_STATUS_LABELS | undefined;
+  const statusLabel = statusKey ? REPAIR_STATUS_LABELS[statusKey] : "Sin estado";
+
   return (
     <section className="section container">
       <div className="admin-header">
@@ -46,7 +49,7 @@ export default async function TrackingPage({ searchParams }: PageProps) {
       {repair ? (
         <div className="section" style={{ paddingTop: 20 }}>
           <div className="card" style={{ padding: 20 }}>
-            <h3>Estado actual: {REPAIR_STATUS_LABELS[repair.status]}</h3>
+            <h3>Estado actual: {statusLabel}</h3>
             <p className="muted">Equipo: {repair.model}</p>
             <p className="muted">Problema: {repair.issue}</p>
             <div className="info-panel" style={{ marginTop: 16 }}>
@@ -60,7 +63,9 @@ export default async function TrackingPage({ searchParams }: PageProps) {
               <ul className="timeline">
                 {repair.updates.map((update) => (
                   <li key={update.id}>
-                    <strong>{REPAIR_STATUS_LABELS[update.status]}</strong>
+                    <strong>
+                      {REPAIR_STATUS_LABELS[update.status as keyof typeof REPAIR_STATUS_LABELS]}
+                    </strong>
                     <span>{update.note || "Sin nota"}</span>
                   </li>
                 ))}
