@@ -78,7 +78,9 @@ export default async function CustomerDetailPage({ params }: PageProps) {
                 <tr key={repair.id}>
                   <td>{repair.trackingCode}</td>
                   <td>{repair.model}</td>
-                  <td>{REPAIR_STATUS_LABELS[repair.status]}</td>
+                  <td>
+                    {REPAIR_STATUS_LABELS[repair.status as keyof typeof REPAIR_STATUS_LABELS]}
+                  </td>
                 </tr>
               ))}
             </tbody>
