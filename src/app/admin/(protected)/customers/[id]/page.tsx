@@ -4,6 +4,40 @@ import { formatArs } from "@/lib/format";
 import { REPAIR_STATUS_LABELS } from "@/lib/repair";
 import Link from "next/link";
 
+async function deleteCustomer(customerId: string) {
+  "use server";
+
+  await prisma.$transaction(async (tx) => {
+    const sales = await tx.sale.findMany({
+      where: { customerId },
+      select: { id: true }
+    });
+    const saleIds = sales.map((sale) => sale.id);
+    if (saleIds.length) {
+      await tx.stockMovement.deleteMany({ where: { saleId: { in: saleIds } } });
+      await tx.saleItem.deleteMany({ where: { saleId: { in: saleIds } } });
+      await tx.sale.deleteMany({ where: { id: { in: saleIds } } });
+    }
+
+    const repairs = await tx.repairOrder.findMany({
+      where: { customerId },
+      select: { id: true }
+    });
+    const repairIds = repairs.map((repair) => repair.id);
+    if (repairIds.length) {
+      await tx.repairUpdate.deleteMany({ where: { repairOrderId: { in: repairIds } } });
+      await tx.stockMovement.deleteMany({ where: { repairOrderId: { in: repairIds } } });
+      await tx.repairOrder.deleteMany({ where: { id: { in: repairIds } } });
+    }
+
+    await tx.customerSession.deleteMany({ where: { customerId } });
+    await tx.customerUser.deleteMany({ where: { customerId } });
+    await tx.customer.delete({ where: { id: customerId } });
+  });
+
+  redirect("/admin/customers");
+}
+
 type PageProps = { params: { id: string } };
 
 export default async function CustomerDetailPage({ params }: PageProps) {
@@ -26,6 +60,9 @@ export default async function CustomerDetailPage({ params }: PageProps) {
           <h2>{customer.name}</h2>
           <p className="muted">{customer.phone}</p>
         </div>
+        <form action={deleteCustomer.bind(null, customer.id)}>
+          <button className="button danger" type="submit">Borrar cliente</button>
+        </form>
       </div>
 
       <div className="section" style={{ paddingTop: 0 }}>
