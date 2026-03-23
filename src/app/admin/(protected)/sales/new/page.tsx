@@ -17,7 +17,7 @@ async function createSale(formData: FormData) {
     redirect("/admin/sales/new?error=1");
   }
 
-  const items = [];
+  const items: { productId: string; quantity: number }[] = [];
   for (let i = 0; i < 5; i += 1) {
     const productId = String(formData.get(`productId_${i}`) || "");
     const quantityRaw = Number(formData.get(`quantity_${i}`) || 0);
@@ -45,7 +45,7 @@ async function createSale(formData: FormData) {
     });
 
     let subtotalArs = 0;
-    const saleItems = [];
+    const saleItems: { productId: string; quantity: number; priceUsd: number; priceArs: number }[] = [];
 
     for (const item of items) {
       const product = products.find((p) => p.id === item.productId);
