@@ -33,7 +33,9 @@ export default async function AdminRepairsPage() {
                 <td>{repair.trackingCode}</td>
                 <td>{repair.customerName}</td>
                 <td>{repair.model}</td>
-                <td>{REPAIR_STATUS_LABELS[repair.status]}</td>
+                <td>
+                  {REPAIR_STATUS_LABELS[repair.status as keyof typeof REPAIR_STATUS_LABELS]}
+                </td>
                 <td>{repair.quoteApproved ? "Aprobado" : "Pendiente"}</td>
                 <td>
                   <Link className="button secondary" href={`/admin/repairs/${repair.id}`}>
