@@ -78,7 +78,11 @@ export default async function StorePage({ searchParams }: PageProps) {
 
   const models = Array.from(new Set(allProducts.map((product) => product.model))).sort();
   const capacities = Array.from(
-    new Set(allProducts.map((product) => product.capacity).filter(Boolean))
+    new Set(
+      allProducts
+        .map((product) => product.capacity)
+        .filter((value): value is string => Boolean(value))
+    )
   ).sort();
 
   return (
