@@ -77,7 +77,8 @@ export default async function RepairDetailPage({ params }: PageProps) {
         .filter(Boolean)
     : [];
   const phoneDigits = repair.phone.replace(/\D/g, "");
-  const statusLabel = REPAIR_STATUS_LABELS[repair.status];
+  const statusLabel =
+    REPAIR_STATUS_LABELS[repair.status as keyof typeof REPAIR_STATUS_LABELS] || "Sin estado";
   const notifyMessage = `Hola ${repair.customerName}, tu reparacion (${repair.trackingCode}) esta en estado "${statusLabel}".`;
 
   return (
