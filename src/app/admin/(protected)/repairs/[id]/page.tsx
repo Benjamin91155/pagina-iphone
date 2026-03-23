@@ -58,6 +58,18 @@ async function updateRepair(repairId: string, formData: FormData) {
   redirect(`/admin/repairs/${repairId}`);
 }
 
+async function deleteRepair(repairId: string) {
+  "use server";
+
+  await prisma.$transaction(async (tx) => {
+    await tx.repairUpdate.deleteMany({ where: { repairOrderId: repairId } });
+    await tx.stockMovement.deleteMany({ where: { repairOrderId: repairId } });
+    await tx.repairOrder.delete({ where: { id: repairId } });
+  });
+
+  redirect("/admin/repairs");
+}
+
 type PageProps = { params: { id: string } };
 
 export default async function RepairDetailPage({ params }: PageProps) {
@@ -90,6 +102,9 @@ export default async function RepairDetailPage({ params }: PageProps) {
             Estado actual: {REPAIR_STATUS_LABELS[repair.status as keyof typeof REPAIR_STATUS_LABELS]}
           </p>
         </div>
+        <form action={deleteRepair.bind(null, repair.id)}>
+          <button className="button danger" type="submit">Borrar reparacion</button>
+        </form>
       </div>
 
       <div className="card" style={{ padding: 20, marginBottom: 24 }}>
