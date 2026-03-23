@@ -186,7 +186,9 @@ export default async function RepairDetailPage({ params }: PageProps) {
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {repair.updates.map((update) => (
               <li key={update.id} style={{ marginBottom: 12 }}>
-                <strong>{REPAIR_STATUS_LABELS[update.status]}</strong>
+                <strong>
+                  {REPAIR_STATUS_LABELS[update.status as keyof typeof REPAIR_STATUS_LABELS]}
+                </strong>
                 <div className="muted">{update.note || "Sin nota"}</div>
               </li>
             ))}
