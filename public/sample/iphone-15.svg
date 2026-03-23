@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a1d24" />
+      <stop offset="100%" stop-color="#3a465c" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#g)" />
+  <rect x="260" y="90" width="280" height="420" rx="36" fill="#0f1115" stroke="#f6c36b" stroke-width="4" />
+  <circle cx="400" cy="130" r="10" fill="#f6c36b" />
+  <rect x="280" y="180" width="240" height="300" rx="16" fill="#151a21" />
+  <text x="400" y="520" text-anchor="middle" fill="#e5f4ee" font-family="Arial" font-size="28">iPhone 15</text>
+</svg>
+

@@ -1,0 +1,30 @@
+{
+  "name": "iphone-store-system",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "prisma db seed"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.20.0",
+    "next": "14.2.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/react": "^18.3.3",
+    "prisma": "^5.20.0",
+    "typescript": "^5.5.4"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  }
+}
+

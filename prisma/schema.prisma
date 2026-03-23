@@ -1,0 +1,201 @@
+// Prisma schema for iPhone store + internal system
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Product {
+  id            String         @id @default(cuid())
+  slug          String         @unique
+  name          String
+  model         String
+  capacity      String?
+  condition     String
+  batteryHealth Int?
+  isUsed        Boolean        @default(false)
+  category      String         @default("iphone")
+  priceUsd      Float
+  stock         Int            @default(0)
+  minStock      Int            @default(0)
+  description   String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  images        ProductImage[]
+  saleItems     SaleItem[]
+  lots          StockLot[]
+  movements     StockMovement[]
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  url       String
+  alt       String?
+  sortOrder Int     @default(0)
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+}
+
+model Customer {
+  id        String        @id @default(cuid())
+  name      String
+  phone     String
+  email     String?
+  notes     String?
+  createdAt DateTime      @default(now())
+  sales     Sale[]
+  repairs   RepairOrder[]
+  user      CustomerUser?
+  sessions  CustomerSession[]
+}
+
+model Sale {
+  id             String        @id @default(cuid())
+  createdAt      DateTime      @default(now())
+  channel        String        @default("LOCAL")
+  paymentMethod  String        @default("EFECTIVO")
+  shippingMethod String        @default("RETIRO")
+  status         String        @default("PENDIENTE")
+  subtotalArs    Float         @default(0)
+  totalArs       Float         @default(0)
+  invoiceNumber  Int           @default(0)
+  soldBy         String?
+  notes          String?
+  customer       Customer?     @relation(fields: [customerId], references: [id])
+  customerId     String?
+  items          SaleItem[]
+  movements      StockMovement[]
+}
+
+model SaleItem {
+  id        String  @id @default(cuid())
+  quantity  Int     @default(1)
+  priceUsd  Float
+  priceArs  Float
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  sale      Sale    @relation(fields: [saleId], references: [id])
+  saleId    String
+}
+
+model RepairOrder {
+  id             String        @id @default(cuid())
+  trackingCode   String        @unique
+  customerName   String
+  phone          String
+  model          String
+  issue          String
+  intakeChannel  String        @default("LOCAL")
+  shippingMethod String        @default("RETIRO")
+  status         String        @default("INGRESADO")
+  diagnosticNotes String?
+  repairNotes    String?
+  partsCost      Float?        @default(0)
+  laborCost      Float?        @default(0)
+  finalPrice     Float?        @default(0)
+  photos         String?
+  quoteApproved  Boolean       @default(false)
+  quoteApprovedAt DateTime?
+  quoteNote      String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  customer       Customer?     @relation(fields: [customerId], references: [id])
+  customerId     String?
+  updates        RepairUpdate[]
+  movements      StockMovement[]
+}
+
+model RepairUpdate {
+  id           String       @id @default(cuid())
+  createdAt    DateTime     @default(now())
+  status       String
+  note         String?
+  repairOrder  RepairOrder  @relation(fields: [repairOrderId], references: [id])
+  repairOrderId String
+}
+
+model StockLot {
+  id         String   @id @default(cuid())
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  String
+  code       String
+  quantity   Int
+  remaining  Int
+  costUsd    Float?
+  notes      String?
+  receivedAt DateTime @default(now())
+  movements  StockMovement[]
+}
+
+model StockMovement {
+  id            String      @id @default(cuid())
+  product       Product     @relation(fields: [productId], references: [id])
+  productId     String
+  type          String
+  quantity      Int
+  reason        String?
+  createdAt     DateTime    @default(now())
+  sale          Sale?       @relation(fields: [saleId], references: [id])
+  saleId        String?
+  repairOrder   RepairOrder? @relation(fields: [repairOrderId], references: [id])
+  repairOrderId String?
+  lot           StockLot?   @relation(fields: [lotId], references: [id])
+  lotId         String?
+}
+
+model Setting {
+  id                      Int     @id @default(autoincrement())
+  exchangeRateMode        String  @default("manual")
+  exchangeRate            Float   @default(1000)
+  profitMarginPercent     Float   @default(0)
+  installmentsFeePercent  Float   @default(0)
+  installmentsCount       Int     @default(3)
+  whatsappNumber          String  @default("5491111111111")
+  shopName                String  @default("iPhone Lab")
+  exchangeRateApiUrl      String? 
+  exchangeRateApiField    String?
+  updatedAt               DateTime @updatedAt
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  salt         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model CustomerUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  salt         String
+  customer     Customer @relation(fields: [customerId], references: [id])
+  customerId   String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model CustomerSession {
+  id         String   @id @default(cuid())
+  token      String   @unique
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+}
+
+model CustomerOtp {
+  id         String   @id @default(cuid())
+  phone      String
+  code       String
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime @default(now())
+}
+
