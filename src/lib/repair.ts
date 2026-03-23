@@ -1,4 +1,4 @@
-export const REPAIR_STATUS_LABELS = {
+export const REPAIR_STATUS_LABELS: Record<string, string> = {
   INGRESADO: "Ingresado",
   DIAGNOSTICO: "En diagnostico",
   REPARACION: "En reparacion",
