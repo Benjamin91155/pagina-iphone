@@ -86,7 +86,9 @@ export default async function RepairDetailPage({ params }: PageProps) {
       <div className="admin-header">
         <div>
           <h2>Reparacion {repair.trackingCode}</h2>
-          <p className="muted">Estado actual: {REPAIR_STATUS_LABELS[repair.status]}</p>
+          <p className="muted">
+            Estado actual: {REPAIR_STATUS_LABELS[repair.status as keyof typeof REPAIR_STATUS_LABELS]}
+          </p>
         </div>
       </div>
 
